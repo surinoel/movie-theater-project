@@ -4,6 +4,7 @@
 #include <string.h>
 
 void initmovielist(void);
+void inituserlist(void);
 int displaymenu(void);
 int displayadminmenu(void);
 void displayerrorhandler(long long);
@@ -14,6 +15,7 @@ void displaymovietimelist(int);
 void addmovielist(void);
 void displayseat(int, int);
 void dipslayseatadmin(void);
+void displaybookingticketinfo(void);
 
 typedef struct Moviedata
 {
@@ -25,10 +27,9 @@ typedef struct Moviedata
 	int runningTime;
 	int **seat;
 	int emptyseatcnt;
+	int ticketprice;
 	struct Moviedata *next;
 } Movie;
-
-Movie **movielist;
 
 struct Moviedetaildata
 {
@@ -36,14 +37,36 @@ struct Moviedetaildata
 	char movieDirector[50];
 	int yearReleased;
 	int runningTime;
+	int ticketprice;
 };
 
+struct MovieTicket
+{
+	char movieTitle[50];
+	int startTime;
+	int exitTime;
+	int runningTime;
+	int seatcnt;
+	int *seatnum;
+};
+
+typedef struct user
+{
+	char name[20];
+	int password;
+	int money;
+	struct MovieTicket *mt;
+} User;
+
+Movie **movielist;
 struct Moviedetaildata *movieinfo;
+User *user;
 
 int main(void) {
 	srand((unsigned)time(NULL));
 	long long curtimetick, flagtick;
 	initmovielist();
+	inituserlist();
 
 	do {
 		system("cls");
@@ -51,6 +74,7 @@ int main(void) {
 		int choicenum;
 		switch (num) {
 		case 1:
+			// 패스워드 입력해야지만 통과할 수 있도록, 통과하지 못하면 초기화면으로
 			choicenum = displayadminmenu();
 			system("cls");
 			switch (choicenum) {
@@ -116,10 +140,10 @@ void initmovielist(void)
 {
 	movielist = (struct Moviedata **)malloc(sizeof(struct Moviedata *) * 4);
 	movieinfo = (struct Moviedetaildata *)malloc(sizeof(struct Moviedetaildata) * 4);
-	strcpy(movieinfo[0].movieTitle, "알라딘"); strcpy(movieinfo[0].movieDirector, "가이 리치"); movieinfo[0].yearReleased = 2019, movieinfo[0].runningTime = 130;
-	strcpy(movieinfo[1].movieTitle, "스파이더맨"); strcpy(movieinfo[1].movieDirector, "존 왓츠"); movieinfo[1].yearReleased = 2019, movieinfo[1].runningTime = 130;
-	strcpy(movieinfo[2].movieTitle, "토이스토리"); strcpy(movieinfo[2].movieDirector, "조시 쿨리"); movieinfo[2].yearReleased = 2019, movieinfo[2].runningTime = 130;
-	strcpy(movieinfo[3].movieTitle, "기생충"); strcpy(movieinfo[3].movieDirector, "봉준호"); movieinfo[3].yearReleased = 2019, movieinfo[3].runningTime = 130;
+	strcpy(movieinfo[0].movieTitle, "알라딘"); strcpy(movieinfo[0].movieDirector, "가이 리치"); movieinfo[0].yearReleased = 2019, movieinfo[0].runningTime = 130; movieinfo[0].ticketprice = 8000;
+	strcpy(movieinfo[1].movieTitle, "스파이더맨"); strcpy(movieinfo[1].movieDirector, "존 왓츠"); movieinfo[1].yearReleased = 2019, movieinfo[1].runningTime = 130; movieinfo[1].ticketprice = 9000;
+	strcpy(movieinfo[2].movieTitle, "토이스토리"); strcpy(movieinfo[2].movieDirector, "조시 쿨리"); movieinfo[2].yearReleased = 2019, movieinfo[2].runningTime = 130; movieinfo[2].ticketprice = 10000;
+	strcpy(movieinfo[3].movieTitle, "기생충"); strcpy(movieinfo[3].movieDirector, "봉준호"); movieinfo[3].yearReleased = 2019, movieinfo[3].runningTime = 130; movieinfo[3].ticketprice = 11000;
 
 	for (int i = 0; i < 4; i++) {
 		movielist[i] = (struct Moviedata *)malloc(sizeof(struct Moviedata) * 4);
@@ -128,6 +152,8 @@ void initmovielist(void)
 			strcpy(movielist[i][j].movieDirector, movieinfo[i].movieDirector);
 			movielist[i][j].yearReleased = movieinfo[i].yearReleased;
 			movielist[i][j].runningTime = movieinfo[i].runningTime;
+			movielist[i][j].ticketprice = movieinfo[i].ticketprice;
+
 			if (j == 0) { movielist[i][j].startTime = 12, movielist[i][j].exitTime = 14; }
 			else if (j == 1) { movielist[i][j].startTime = 15, movielist[i][j].exitTime = 17; }
 			else if (j == 2) { movielist[i][j].startTime = 18, movielist[i][j].exitTime = 20; }
@@ -152,6 +178,17 @@ void initmovielist(void)
 			}
 		}
 	}
+}
+
+void inituserlist(void)
+{
+	user = (User *)malloc(sizeof(User) * 3);
+	for (int i = 0; i < 3; i++) {
+		user[i].mt = (struct MovieTicket *)malloc(sizeof(struct MovieTicket) * 3);
+	}
+	strcpy(user[0].name, "유영재"); user[0].password = 1234; user[0].money = 20000;
+	strcpy(user[1].name, "김재혁"); user[1].password = 3456; user[1].money = 20000;
+	strcpy(user[2].name, "김륜영"); user[2].password = 5678; user[2].money = 20000;
 }
 
 int displaymenu(void)
@@ -271,7 +308,7 @@ void displaymovietimelist(int movienum)
 	Movie **ptr = movielist;
 	system("cls");
 	printf("\n\n\n\n\n\n");
-	printf("\t\t%s의 상영 시간표입니다\n\n", ptr[movienum - 1]->movieTitle);
+	printf("\t\t  %s의 상영 시간표입니다\n\n", ptr[movienum - 1]->movieTitle);
 
 	for (int i = 0; i < _msize(ptr[movienum - 1]) / sizeof(*ptr[movienum - 1]); i++) {
 		printf("\t\t  [%d]\n", i + 1);
@@ -291,7 +328,6 @@ void addmovielist(void)
 
 }
 
-
 void displayseat(int movienum, int stime)
 {
 	Movie ptr = movielist[movienum][stime];
@@ -300,7 +336,7 @@ void displayseat(int movienum, int stime)
 	printf("\t\t  시작시간 : %d:00 | 종료시간 : %d:00 | 러닝타임 : %d분\n", ptr.startTime, ptr.exitTime, ptr.runningTime);
 	printf("\t    =================================================================  \n");
 	printf("\t\t\t\t\t  SCREEN\t\t\t\t\n");
-	printf("\t    =================================================================  \n");
+	printf("\t    =================================================================  \n"); 
 
 	for (int j = 0; j < _msize(ptr.seat) / sizeof(*ptr.seat); j++) {
 		for (int k = 0; k < _msize(ptr.seat[j]) / sizeof(*ptr.seat[j]); k++) {
@@ -313,7 +349,48 @@ void displayseat(int movienum, int stime)
 		}
 		printf("\n\n");
 	}
-	printf("\n\n");
+
+	int hnum;
+	printf("\t\t\t\tx가 예매할 수 있는 자리입니다\n\n");
+	printf("\t\t\t인원 수를 입력해주세요 (최대 4인) : "); scanf("%d", &hnum);
+	if (hnum > 4 || hnum + ptr.emptyseatcnt > 100) { // 오류 발생
+
+	}
+	printf("\t\t  원하시는 좌석 번호 공백을 두고 입력해주세요 (선택한 갯수 만큼 입력) : ");
+	int *seatbuf = (int *)malloc(sizeof(int) * hnum);
+	int ssize = _msize(seatbuf) / sizeof(*seatbuf);
+
+	for (int i = 0; i < _msize(seatbuf) / sizeof(*seatbuf); i++) {
+		scanf("%d", &seatbuf[i]);
+		if (!(seatbuf[i] >= 1 && seatbuf[i] <= 100)) {
+			// error handler
+
+		}
+		int x, y;
+		x = seatbuf[i] / 10, y = seatbuf[i] % 10;
+		if (ptr.seat[x][y] == 1) {
+			// error handler
+
+		}
+	}
+	
+	char name[20];
+	printf("\t\t  회원 이름을 입력하세요 : "); scanf("%s", name);
+	for (int i = 0; i < _msize(user) / sizeof(*user); i++) {
+		if (!strcmp(user[i].name, name)) {
+			int pswd;
+			printf("\t\t %s님! 비밀번호를 입력하세요 : ", user[i].name); scanf("%d", &pswd);
+			if (user[i].password == pswd && user[i].money > ssize * ptr.ticketprice) {
+				user[i].mt->seatcnt = ssize;
+				user[i].mt->seatnum = (int *)malloc(sizeof(int) * ssize);
+				memcpy(user[i].mt->seatnum, seatbuf, sizeof(seatbuf) * ssize);
+				printf("구매 가능합니다\n");
+				printf("돈이 %d원 남았어요\n", user[i].money - ssize * ptr.ticketprice);
+				displaybookingticketinfo(ptr, user[i]);
+			}
+		}
+		// error handler
+	}
 
 	system("pause");
 }
@@ -373,4 +450,26 @@ void dipslayseatadmin(void) {
 	}
 
 	system("pause");
+}
+
+void displaybookingticketinfo(Movie ptr, User us)
+{
+	system("cls");
+	printf("\n\n");
+	printf("\t--------------------영화 예매 티켓 정보---------------------\n");
+	printf("\t============================================================\n");
+	printf("\t 영화 : %s \t\t\t 감독 : %s\n", ptr.movieTitle, ptr.movieDirector);
+	printf("\t 회원정보  : %s\n", us.name);
+	printf("\t                                              날짜             : 29-07-2019\n");
+	printf("\t                                              상영시간         : %d:00 ~ %d:00\n", ptr.startTime, ptr.exitTime);
+	printf("\t                                              총상영시간       : %d분\n", ptr.runningTime);
+	for (int i = 0; i < us.mt->seatcnt; i++) {
+		printf("\t                                              좌석정보 No. : %d  \n", us.mt->seatnum[i]);
+	}
+	// printf("\t                                              price . : %d  \n\n", us.mt->);
+
+	printf("\t============================================================\n");
+	system("pause");
+	return;
+
 }
