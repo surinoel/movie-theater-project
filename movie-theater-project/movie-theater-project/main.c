@@ -1,3 +1,4 @@
+// 좌석 변경
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -538,7 +539,9 @@ void canclemovieticket(void)
 			system("cls");
 			printf("\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t "); printf("취소할 영화이름을 입력해주세요: "); scanf("%s", moviebuf);
 			if (!strcmp(moviebuf, user[i].mt->movieTitle)) {
-				printf("일치했습니다\n");
+				user[i].money += user[i].mt->ticketprice * user[i].mt->seatcnt;
+				free(user[i].mt);
+				user[i].mt = (struct MovieTicket *)malloc(sizeof(struct MovieTicket) * 3);
 			}
 			system("pause");
 		}
