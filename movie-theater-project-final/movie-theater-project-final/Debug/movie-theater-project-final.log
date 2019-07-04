@@ -1,22 +1,22 @@
 ﻿  main.c
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(176): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(161): warning C4101: 'flagtick' :참조되지 않은 지역 변수입니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(161): warning C4101: 'curtimetick' :참조되지 않은 지역 변수입니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(209): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(283): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(292): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(318): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(319): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(181): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(166): warning C4101: 'flagtick' :참조되지 않은 지역 변수입니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(166): warning C4101: 'curtimetick' :참조되지 않은 지역 변수입니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(214): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(288): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(297): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
 f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(323): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(339): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(357): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(397): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(410): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(324): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(328): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(344): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(363): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(403): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
 f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(416): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(417): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(421): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(526): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(521): warning C4101: 'flagtick' :참조되지 않은 지역 변수입니다.
-f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(521): warning C4101: 'curtimetick' :참조되지 않은 지역 변수입니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(422): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(423): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(427): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(531): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(526): warning C4101: 'flagtick' :참조되지 않은 지역 변수입니다.
+f:\git\c-project\movie-theater-project-final\movie-theater-project-final\main.c(526): warning C4101: 'curtimetick' :참조되지 않은 지역 변수입니다.
   movie-theater-project-final.vcxproj -> F:\git\c-project\movie-theater-project-final\Debug\movie-theater-project-final.exe
   movie-theater-project-final.vcxproj -> F:\git\c-project\movie-theater-project-final\Debug\movie-theater-project-final.pdb (Full PDB)

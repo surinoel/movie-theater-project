@@ -19,7 +19,7 @@ static int display_seat(int, int);								// 상영관의 좌석정보를 보여주는 함수
 static void dipslay_seat_admin(void);							// 관리자 모드에서 영화이름을 검색해서 보여주는 함수
 static void display_bookingticket_info(Movie, User);			// 영화예매를 완료했을 때 예매 정보를 보여주는 함수				
 static void cancle_movie_ticket(void);							// 영화티켓을 취소하는 함수
-static void show_userinfo(User);
+static void show_userinfo(User);								// 사용자 예매 정보를 보여주는 함수
 
 typedef struct Moviedata
 {
@@ -59,13 +59,14 @@ struct Moviedetaildata *movieinfo;
 User *user;
 
 int main(void) {
-	srand((unsigned)time(NULL));
-	int adminpswd = 1234;
-	init_movielist();
+	srand((unsigned)time(NULL));				// 랜덤 시드 발생, 좌석 랜덤 배치로 인해 사용
+	int adminpswd = 1234;						// 관리자 비밀번호
+	init_movielist();							// 초기화
 	init_userlist();
 
 	do {
 		system("cls");
+		rewind(stdin);
 		int num = display_menu();
 		int choicenum;
 		rewind(stdin);
@@ -102,8 +103,8 @@ end:
 static void init_movielist(void)
 {
 	// 영화 정보를 초기화
-	movielist = (struct Moviedata **)malloc(sizeof(struct Moviedata *) * 4);
-	movieinfo = (struct Moviedetaildata *)malloc(sizeof(struct Moviedetaildata) * 4);
+	movielist = (struct Moviedata **)malloc(sizeof(struct Moviedata *) * 4);				// 영화 정보
+	movieinfo = (struct Moviedetaildata *)malloc(sizeof(struct Moviedetaildata) * 4);		// 반복되는 정보를 위해 사용
 	strcpy(movieinfo[0].movieTitle, "알라딘"); strcpy(movieinfo[0].movieDirector, "가이 리치"); movieinfo[0].yearReleased = 2019, movieinfo[0].runningTime = 130; movieinfo[0].ticketprice = 8000;
 	strcpy(movieinfo[1].movieTitle, "스파이더맨"); strcpy(movieinfo[1].movieDirector, "존 왓츠"); movieinfo[1].yearReleased = 2019, movieinfo[1].runningTime = 130; movieinfo[1].ticketprice = 9000;
 	strcpy(movieinfo[2].movieTitle, "토이스토리"); strcpy(movieinfo[2].movieDirector, "조시 쿨리"); movieinfo[2].yearReleased = 2019, movieinfo[2].runningTime = 130; movieinfo[2].ticketprice = 10000;
@@ -123,10 +124,12 @@ static void init_movielist(void)
 			else if (j == 2) { movielist[i][j].startTime = 18, movielist[i][j].exitTime = 20; }
 			else if (j == 3) { movielist[i][j].startTime = 21, movielist[i][j].exitTime = 23; }
 
+			// 좌석 초기화, 10 x 10
 			movielist[i][j].seat = (int **)malloc(10 * sizeof(int *));
 			for (int k = 0; k < 10; k++) {
 				*(movielist[i][j].seat + k) = (int *)malloc(10 * sizeof(int));
 			}
+			// 랜덤함수를 이용해서 여석 정보 초기화
 			movielist[i][j].emptyseatcnt = 0;
 			for (int u = 0; u < 10; u++) {
 				for (int v = 0; v < 10; v++) {
@@ -143,15 +146,17 @@ static void init_movielist(void)
 
 static void init_userlist(void)
 {
-	user = (User *)malloc(sizeof(User) * 3);
+	// 사용자 정보 초기화
+	user = (User *)malloc(sizeof(User) * 4);
 	memset(user, 0, sizeof(user));
-	for (int i = 0; i < 3; i++) {
-		user[i].mt = (struct MovieTicket *)malloc(sizeof(struct MovieTicket));
-		memset(user[i].mt, 0, sizeof(user[i].mt));
+	for (int i = 0; i < 4; i++) {
+		user[i].mt = (struct MovieTicket *)malloc(sizeof(struct MovieTicket) * 3);
+		memset(user[i].mt, 0, sizeof(user[i].mt) * 3);
 	}
 	strcpy(user[0].name, "유영재"); user[0].password = 1234; user[0].money = 20000; user[0].mt->seatcnt = 0;
-	strcpy(user[1].name, "김재혁"); user[1].password = 3456; user[1].money = 20000; user[0].mt->seatcnt = 0;
-	strcpy(user[2].name, "김륜영"); user[2].password = 5678; user[2].money = 20000; user[0].mt->seatcnt = 0;
+	strcpy(user[1].name, "임정희"); user[1].password = 3456; user[1].money = 20000; user[1].mt->seatcnt = 0;
+	strcpy(user[2].name, "양금영"); user[2].password = 5678; user[2].money = 20000; user[2].mt->seatcnt = 0;
+	strcpy(user[3].name, "이경희"); user[3].password = 9999; user[3].money = 20000; user[3].mt->seatcnt = 0;
 }
 
 static void check_admin(int adminpswd)
@@ -348,6 +353,7 @@ static int display_seat(int movienum, int stime)
 		}
 		else {
 			ptr.seat[x][y] = 1;
+			ptr.emptyseatcnt -= 1;
 		}
 	}
 
@@ -415,7 +421,7 @@ void dipslay_seat_admin(void)
 
 			for (int j = 0; j < _msize(ptr[idx][i].seat) / sizeof(*ptr[idx][i].seat); j++) {
 				for (int k = 0; k < _msize(ptr[idx][i].seat[j]) / sizeof(*ptr[idx][i].seat[j]); k++) {
-					printf("\t%d", j * 10 + k);
+					printf("\t%d", j * 10 + k + 1);
 				}
 				printf("\n");
 				for (int k = 0; k < _msize(ptr[idx][i].seat[j]) / sizeof(*ptr[idx][i].seat[j]); k++) {
@@ -430,7 +436,6 @@ void dipslay_seat_admin(void)
 	}
 
 	system("pause");
-
 }
 
 void display_bookingticket_info(Movie ptr, User us)
