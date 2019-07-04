@@ -18,8 +18,7 @@ void displaywriteerrorhandler(long long);
 void displayexithandler(long long);
 int displaymovielist(void);
 void displaymovietimelist(int);
-void addmovielist(void);
-void displayseat(int, int);
+int displayseat(int, int);
 void dipslayseatadmin(void);
 void displaybookingticketinfo(Movie, User);
 void canclemovieticket(void);
@@ -81,9 +80,9 @@ int main(void) {
 		system("cls");
 		int num = displaymenu();
 		int choicenum;
+		rewind(stdin);
 		switch (num) {
 		case 1:
-			// 패스워드 입력해야지만 통과할 수 있도록, 통과하지 못하면 초기화면으로
 			checkadmin(adminpswd);
 			break;
 		case 2:
@@ -122,6 +121,7 @@ int main(void) {
 					displaywriteerrorhandler(curtimetick);
 				}
 			}
+			fflush(stdin);
 			break;
 		}
 	} while (1);
@@ -246,9 +246,6 @@ void checkadmin(int adminpswd)
 		case 2:
 			dipslayseatadmin();
 			break;
-		case 3:
-			// 신작추가
-			break;
 		default:
 			break;
 		}
@@ -277,12 +274,11 @@ int displayadminmenu(void)
 		printf("\t\t\t    "); printf(" ==================================================================\n");
 		printf("\t\t\t    "); printf("||             1- 가격 수정하기:                                  ||\n");
 		printf("\t\t\t    "); printf("||             2- 좌석 현황보기:                                  ||\n");
-		printf("\t\t\t    "); printf("||             3- 신작 추가하기:                                  ||\n");
 		printf("\t\t\t    "); printf("||================================================================||\n");
 		printf("\t\t\t    "); printf("	뒤로 가려면 0번을 눌러주세요 \n");
 		printf("\t\t\t    "); printf("	번호를 선택해주세요: ");
 		scanf("%d", &num);
-		if (num == 1 || num == 2 || num == 3 || num == 0) {
+		if (num == 1 || num == 2 || num == 0) {
 			return num;
 		}
 		long long curtimetick, flagtick;
@@ -381,7 +377,7 @@ void displaymovietimelist(int movienum)
 	printf("\t\t  원하시는 시간에 대한 번호를 입력하세요 : "); 
 	scanf("%d", &selecttime);
 	if (!(selecttime - 1 >= 0 && selecttime - 1 < _msize(ptr) / sizeof(*ptr))) goto err;
-	displayseat(movienum - 1, selecttime - 1);
+	if (displayseat(movienum - 1, selecttime - 1)) goto err;
 	system("pause");
 	
 	return;
@@ -395,17 +391,12 @@ err:
 			displayerrorhandler(curtimetick);
 		}
 	}
-
 }
 
-void addmovielist(void)
-{
-
-}
-
-void displayseat(int movienum, int stime)
+int displayseat(int movienum, int stime)
 {
 	Movie ptr = movielist[movienum][stime];
+	long long curtimetick, flagtick;
 	system("cls");
 	printf("\n\n");
 	printf("\t\t  시작시간 : %d:00 | 종료시간 : %d:00 | 러닝타임 : %d분\n", ptr.startTime, ptr.exitTime, ptr.runningTime);
@@ -428,24 +419,21 @@ void displayseat(int movienum, int stime)
 	int hnum;
 	printf("\t\t\t\tx가 예매할 수 있는 자리입니다\n\n");
 	printf("        인원 수를 입력해주세요 (최대 4인)                                   : "); scanf("%d", &hnum);
-	if (hnum > 4 || hnum + ptr.emptyseatcnt > 100) { // 오류 발생
-
-	}
+	if (hnum > 4 || hnum + ptr.emptyseatcnt > 100) return -1;
+	
 	printf("        원하시는 좌석 번호 공백을 두고 입력해주세요 (선택한 갯수 만큼 입력) : ");
 	int *seatbuf = (int *)malloc(sizeof(int) * hnum);
 	int ssize = _msize(seatbuf) / sizeof(*seatbuf);
 
 	for (int i = 0; i < _msize(seatbuf) / sizeof(*seatbuf); i++) {
 		scanf("%d", &seatbuf[i]);
-		if (!(seatbuf[i] >= 1 && seatbuf[i] <= 100)) {
-			// error handler
-
+		if (!(seatbuf[i] - 1> 0 && seatbuf[i] - 1 < 100)) {
+			return -1;
 		}
 		int x, y;
-		x = seatbuf[i] / 10, y = seatbuf[i] % 10;
+		x = (seatbuf[i] - 1) / 10, y = (seatbuf[i] - 1) % 10;
 		if (ptr.seat[x][y] == 1) {
-			// error handler
-
+			return -1;
 		}
 		else {
 			ptr.seat[x][y] = 1;
@@ -454,6 +442,7 @@ void displayseat(int movienum, int stime)
 	
 	char name[20];
 	printf("        회원 이름을 입력하세요                                              : "); scanf("%s", name);
+	// 이름
 	for (int i = 0; i < _msize(user) / sizeof(*user); i++) {
 		if (!strcmp(user[i].name, name)) {
 			int pswd;
@@ -472,7 +461,8 @@ void displayseat(int movienum, int stime)
 		}
 		// error handler
 	}
-
+	
+	return 0;
 }
 
 void dipslayseatadmin(void) {
@@ -595,7 +585,7 @@ void showuserinfo(User us)
 		}
 	}
 }
-
+// 취소
 void canclemovieticket(void)
 {
 	system("cls");
@@ -622,7 +612,7 @@ void canclemovieticket(void)
 		}
 	}
 	if (ok) {
-
+		
 	}
 
 }
