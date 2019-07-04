@@ -188,9 +188,9 @@ void inituserlist(void)
 	for (int i = 0; i < 3; i++) {
 		user[i].mt = (struct MovieTicket *)malloc(sizeof(struct MovieTicket) * 3);
 	}
-	strcpy(user[0].name, "유영재"); user[0].password = 1234; user[0].money = 20000;
-	strcpy(user[1].name, "김재혁"); user[1].password = 3456; user[1].money = 20000;
-	strcpy(user[2].name, "김륜영"); user[2].password = 5678; user[2].money = 20000;
+	strcpy(user[0].name, "유영재"); user[0].password = 1234; user[0].money = 20000; user[0].mt->seatcnt = 0;
+	strcpy(user[1].name, "김재혁"); user[1].password = 3456; user[1].money = 20000; user[0].mt->seatcnt = 0;
+	strcpy(user[2].name, "김륜영"); user[2].password = 5678; user[2].money = 20000; user[0].mt->seatcnt = 0;
 }
 
 int displaymenu(void)
@@ -383,7 +383,9 @@ void displayseat(int movienum, int stime)
 			int pswd;
 			printf("        %s님! 비밀번호를 입력하세요                                     : ", user[i].name); scanf("%d", &pswd);
 			if (user[i].password == pswd && user[i].money > ssize * ptr.ticketprice) {
-				user[i].mt->seatcnt = ssize;
+				strcpy(user[i].mt->movieTitle, ptr.movieTitle);
+				user[i].mt->seatcnt = ssize; 
+				user[i].mt->runningTime = ptr.runningTime; user[i].mt->startTime = ptr.startTime; user[i].mt->exitTime = ptr.exitTime;
 				user[i].mt->ticketprice = ptr.ticketprice;
 				user[i].mt->seatnum = (int *)malloc(sizeof(int) * ssize);
 				memcpy(user[i].mt->seatnum, seatbuf, sizeof(seatbuf) * ssize);
@@ -527,12 +529,17 @@ void canclemovieticket(void)
 	for (int i = 0; i < _msize(user) / sizeof(*user); i++) {
 		if (!strcmp(buf, user[i].name)) {
 			int pswd;
-			printf("        %s님! 비밀번호를 입력하세요                                     : ", user[i].name); scanf("%d", &pswd);
+			printf("\t\t  %s님! 비밀번호를 입력하세요: ", user[i].name); scanf("%d", &pswd);
 			if (pswd == user[i].password) {
-				showuserinfo(user[i]);
+				if (user[i].mt->seatcnt != 0) {
+					showuserinfo(user[i]);
+				}
 			}
 			system("cls");
 			printf("\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t "); printf("취소할 영화이름을 입력해주세요: "); scanf("%s", moviebuf);
+			if (!strcmp(moviebuf, user[i].mt->movieTitle)) {
+				printf("일치했습니다\n");
+			}
 			system("pause");
 		}
 	}

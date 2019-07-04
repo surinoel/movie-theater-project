@@ -5,11 +5,11 @@ f:\git\c-project\movie-theater-project\movie-theater-project\main.c(344): warnin
 f:\git\c-project\movie-theater-project\movie-theater-project\main.c(348): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
 f:\git\c-project\movie-theater-project\movie-theater-project\main.c(365): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
 f:\git\c-project\movie-theater-project\movie-theater-project\main.c(381): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(410): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(432): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(438): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(439): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(443): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(527): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(412): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(434): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(440): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(441): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(445): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(529): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   movie-theater-project.vcxproj -> F:\git\c-project\movie-theater-project\Debug\movie-theater-project.exe
   movie-theater-project.vcxproj -> F:\git\c-project\movie-theater-project\Debug\movie-theater-project.pdb (Full PDB)
