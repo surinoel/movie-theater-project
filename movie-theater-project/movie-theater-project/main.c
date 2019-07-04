@@ -16,6 +16,8 @@ void changeprice(int, int);
 void displayerrorhandler(long long);
 void displaywriteerrorhandler(long long);
 void displayexithandler(long long);
+void displaymoneyerrorhandler(long long);
+void displaybookingerrorhandler(long long);
 int displaymovielist(void);
 void displaymovietimelist(int);
 int displayseat(int, int);
@@ -121,7 +123,6 @@ int main(void) {
 					displaywriteerrorhandler(curtimetick);
 				}
 			}
-			fflush(stdin);
 			break;
 		}
 	} while (1);
@@ -164,9 +165,6 @@ void initmovielist(void)
 						movielist[i][j].emptyseatcnt += 1;
 					}
 				}
-			}
-			if (j < 3) {
-				movielist[i][j].next = &movielist[i][j + 1];
 			}
 		}
 	}
@@ -324,9 +322,28 @@ void displayexithandler(long long curtimetick)
 	printf("%lld초 안에 프로그램이 종료됩니다\n", 5 - (clock() - curtimetick) / CLOCKS_PER_SEC);
 }
 
+void displaymoneyerrorhandler(long long curtimetick)
+{
+	system("cls");
+	printf("\n\n\n\n\n\n\n\n\n\n");
+	printf("\t\t\t\t\t#   ");
+	printf("돈이 없습니다 ㅠㅠ\n");
+	printf("\t\t\t\t\t#   ");
+	printf("%lld초 안에 프로그램이 종료됩니다\n", 5 - (clock() - curtimetick) / CLOCKS_PER_SEC);
+}
+
+void displaybookingerrorhandler(long long curtimetick)
+{
+	system("cls");
+	printf("\n\n\n\n\n\n\n\n\n\n");
+	printf("\t\t\t\t\t#   ");
+	printf("예매내역이 없습니다 \n");
+	printf("\t\t\t\t\t#   ");
+	printf("%lld초 안에 프로그램이 종료됩니다\n", 5 - (clock() - curtimetick) / CLOCKS_PER_SEC);
+}
+
 int displaymovielist(void)
 {
-	// 영화목록 추가
 	int movienumber;
 	while (1) {
 		system("cls");
@@ -360,6 +377,7 @@ int displaymovielist(void)
 
 void displaymovietimelist(int movienum) 
 {
+	int ret;
 	Movie **ptr = movielist;
 	long long curtimetick, flagtick;
 
@@ -377,10 +395,13 @@ void displaymovietimelist(int movienum)
 	printf("\t\t  원하시는 시간에 대한 번호를 입력하세요 : "); 
 	scanf("%d", &selecttime);
 	if (!(selecttime - 1 >= 0 && selecttime - 1 < _msize(ptr) / sizeof(*ptr))) goto err;
-	if (displayseat(movienum - 1, selecttime - 1)) goto err;
+	ret = displayseat(movienum - 1, selecttime - 1);
+	if (ret == -1) goto err;
+	else if (ret == 1) goto err2;
+
 	system("pause");
-	
 	return;
+
 err:
 	curtimetick = clock();
 	flagtick = curtimetick / CLOCKS_PER_SEC;
@@ -391,6 +412,18 @@ err:
 			displayerrorhandler(curtimetick);
 		}
 	}
+	return;
+err2:
+	curtimetick = clock();
+	flagtick = curtimetick / CLOCKS_PER_SEC;
+	displaymoneyerrorhandler(curtimetick);
+	while ((clock() - curtimetick) / CLOCKS_PER_SEC < 5) {
+		if (flagtick != (clock() - curtimetick) / CLOCKS_PER_SEC) {
+			flagtick = (clock() - curtimetick) / CLOCKS_PER_SEC;
+			displaymoneyerrorhandler(curtimetick);
+		}
+	}
+	return;
 }
 
 int displayseat(int movienum, int stime)
@@ -440,28 +473,35 @@ int displayseat(int movienum, int stime)
 		}
 	}
 	
+	int idx = -1;
 	char name[20];
 	printf("        회원 이름을 입력하세요                                              : "); scanf("%s", name);
-	// 이름
 	for (int i = 0; i < _msize(user) / sizeof(*user); i++) {
 		if (!strcmp(user[i].name, name)) {
+			idx = i;
 			int pswd;
 			printf("        %s님! 비밀번호를 입력하세요                                     : ", user[i].name); scanf("%d", &pswd);
-			if (user[i].password == pswd && user[i].money > ssize * ptr.ticketprice) {
-				strcpy(user[i].mt->movieTitle, ptr.movieTitle);
-				user[i].mt->seatcnt = ssize; 
-				user[i].mt->runningTime = ptr.runningTime; user[i].mt->startTime = ptr.startTime; user[i].mt->exitTime = ptr.exitTime;
-				user[i].mt->ticketprice = ptr.ticketprice;
-				user[i].mt->seatnum = (int *)malloc(sizeof(int) * ssize);
-				memcpy(user[i].mt->seatnum, seatbuf, sizeof(seatbuf) * ssize);
-				// printf("구매 가능합니다\n");
-				// printf("돈이 %d원 남았어요\n", user[i].money - ssize * ptr.ticketprice);
-				displaybookingticketinfo(ptr, user[i]);
+			if (user[i].password == pswd) {
+				if (user[i].money > ssize * ptr.ticketprice) {
+					strcpy(user[i].mt->movieTitle, ptr.movieTitle);
+					user[i].mt->seatcnt = ssize;
+					user[i].mt->runningTime = ptr.runningTime; user[i].mt->startTime = ptr.startTime; user[i].mt->exitTime = ptr.exitTime;
+					user[i].mt->ticketprice = ptr.ticketprice;
+					user[i].mt->seatnum = (int *)malloc(sizeof(int) * ssize);
+					memcpy(user[i].mt->seatnum, seatbuf, sizeof(seatbuf) * ssize);
+					displaybookingticketinfo(ptr, user[i]);
+				}
+				else {
+					return 1;
+				}
+			}
+			else {
+				return -1;
 			}
 		}
-		// error handler
 	}
-	
+
+	if (idx == -1) return -1;
 	return 0;
 }
 
@@ -567,7 +607,6 @@ void showuserinfo(User us)
 			flagtick = (clock() - curtimetick) / CLOCKS_PER_SEC;
 			system("cls");
 			printf("\n\n\n\n");
-			printf("\t                         예매가 성공적으로 완료됐습니다 !                    \n\n\n");
 			printf("\t------------------------------영화 예매 티켓 정보----------------------------\n");
 			printf("\t=============================================================================\n");
 			printf("\t 영화      : %s \t\t\t", us.mt->movieTitle);
@@ -585,14 +624,16 @@ void showuserinfo(User us)
 		}
 	}
 }
-// 취소
+
 void canclemovieticket(void)
 {
+	long long curtimetick, flagtick;
 	system("cls");
 	char buf[20], moviebuf[20]; memset(buf, 0, sizeof(buf)); memset(moviebuf, 0, sizeof(buf));
 	bool ok = false;
 	printf("\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t "); printf("회원 이름을 입력해주세요: "); scanf("%s", buf);
 	for (int i = 0; i < _msize(user) / sizeof(*user); i++) {
+		ok = true;
 		if (!strcmp(buf, user[i].name)) {
 			int pswd;
 			printf("\t\t  %s님! 비밀번호를 입력하세요: ", user[i].name); scanf("%d", &pswd);
@@ -600,6 +641,12 @@ void canclemovieticket(void)
 				if (user[i].mt->seatcnt != 0) {
 					showuserinfo(user[i]);
 				}
+				else {
+					goto err;
+				}
+			}
+			else {
+				goto err2;
 			}
 			system("cls");
 			printf("\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t "); printf("취소할 영화이름을 입력해주세요: "); scanf("%s", moviebuf);
@@ -607,12 +654,37 @@ void canclemovieticket(void)
 				user[i].money += user[i].mt->ticketprice * user[i].mt->seatcnt;
 				free(user[i].mt);
 				user[i].mt = (struct MovieTicket *)malloc(sizeof(struct MovieTicket) * 3);
+				user[i].mt->seatcnt = 0;
 			}
-			system("pause");
+			else {
+				goto err2;
+			}
 		}
 	}
-	if (ok) {
-		
-	}
+	if (!ok) goto err2;
+	return;
 
+err:	
+	curtimetick = clock();
+	flagtick = curtimetick / CLOCKS_PER_SEC;
+	displaybookingerrorhandler(curtimetick);
+	while ((clock() - curtimetick) / CLOCKS_PER_SEC < 5) {
+		if (flagtick != (clock() - curtimetick) / CLOCKS_PER_SEC) {
+			flagtick = (clock() - curtimetick) / CLOCKS_PER_SEC;
+			displaybookingerrorhandler(curtimetick);
+		}
+	}
+	return;
+
+err2:
+	curtimetick = clock();
+	flagtick = curtimetick / CLOCKS_PER_SEC;
+	displayerrorhandler(curtimetick);
+	while ((clock() - curtimetick) / CLOCKS_PER_SEC < 5) {
+		if (flagtick != (clock() - curtimetick) / CLOCKS_PER_SEC) {
+			flagtick = (clock() - curtimetick) / CLOCKS_PER_SEC;
+			displayerrorhandler(curtimetick);
+		}
+	}
+	return;
 }
