@@ -1,16 +1,15 @@
 ﻿  main.c
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(313): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(341): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(342): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(346): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(363): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(379): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(389): warning C4087: 'displaybookingticketinfo': 'void' 매개 변수 목록을 사용하여 선언되었습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(408): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(430): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(436): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(437): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(441): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-f:\git\c-project\movie-theater-project\movie-theater-project\main.c(456): warning C4027: 정식 매개 변수 목록을 사용하지 않고 함수를 선언했습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(315): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(343): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(344): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(348): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(365): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(381): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(410): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(432): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(438): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(439): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(443): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+f:\git\c-project\movie-theater-project\movie-theater-project\main.c(527): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   movie-theater-project.vcxproj -> F:\git\c-project\movie-theater-project\Debug\movie-theater-project.exe
   movie-theater-project.vcxproj -> F:\git\c-project\movie-theater-project\Debug\movie-theater-project.pdb (Full PDB)

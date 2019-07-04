@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 void initmovielist(void);
 void inituserlist(void);
@@ -15,7 +16,8 @@ void displaymovietimelist(int);
 void addmovielist(void);
 void displayseat(int, int);
 void dipslayseatadmin(void);
-void displaybookingticketinfo(void);
+void displaybookingticketinfo(Movie, User);
+void canclemovieticket(void);
 
 typedef struct Moviedata
 {
@@ -46,6 +48,7 @@ struct MovieTicket
 	int startTime;
 	int exitTime;
 	int runningTime;
+	int ticketprice;
 	int seatcnt;
 	int *seatnum;
 };
@@ -104,8 +107,7 @@ int main(void) {
 			}
 			break;
 		case 3:
-			system("cls");
-			system("pause");
+			canclemovieticket();
 			break;
 		case 4:
 			curtimetick = clock();
@@ -336,7 +338,7 @@ void displayseat(int movienum, int stime)
 	printf("\t\t  시작시간 : %d:00 | 종료시간 : %d:00 | 러닝타임 : %d분\n", ptr.startTime, ptr.exitTime, ptr.runningTime);
 	printf("\t    =================================================================  \n");
 	printf("\t\t\t\t\t  SCREEN\t\t\t\t\n");
-	printf("\t    =================================================================  \n"); 
+	printf("\t    =================================================================  \n\n"); 
 
 	for (int j = 0; j < _msize(ptr.seat) / sizeof(*ptr.seat); j++) {
 		for (int k = 0; k < _msize(ptr.seat[j]) / sizeof(*ptr.seat[j]); k++) {
@@ -352,11 +354,11 @@ void displayseat(int movienum, int stime)
 
 	int hnum;
 	printf("\t\t\t\tx가 예매할 수 있는 자리입니다\n\n");
-	printf("\t\t\t인원 수를 입력해주세요 (최대 4인) : "); scanf("%d", &hnum);
+	printf("        인원 수를 입력해주세요 (최대 4인)                                   : "); scanf("%d", &hnum);
 	if (hnum > 4 || hnum + ptr.emptyseatcnt > 100) { // 오류 발생
 
 	}
-	printf("\t\t  원하시는 좌석 번호 공백을 두고 입력해주세요 (선택한 갯수 만큼 입력) : ");
+	printf("        원하시는 좌석 번호 공백을 두고 입력해주세요 (선택한 갯수 만큼 입력) : ");
 	int *seatbuf = (int *)malloc(sizeof(int) * hnum);
 	int ssize = _msize(seatbuf) / sizeof(*seatbuf);
 
@@ -375,24 +377,24 @@ void displayseat(int movienum, int stime)
 	}
 	
 	char name[20];
-	printf("\t\t  회원 이름을 입력하세요 : "); scanf("%s", name);
+	printf("        회원 이름을 입력하세요                                              : "); scanf("%s", name);
 	for (int i = 0; i < _msize(user) / sizeof(*user); i++) {
 		if (!strcmp(user[i].name, name)) {
 			int pswd;
-			printf("\t\t %s님! 비밀번호를 입력하세요 : ", user[i].name); scanf("%d", &pswd);
+			printf("        %s님! 비밀번호를 입력하세요                                     : ", user[i].name); scanf("%d", &pswd);
 			if (user[i].password == pswd && user[i].money > ssize * ptr.ticketprice) {
 				user[i].mt->seatcnt = ssize;
+				user[i].mt->ticketprice = ptr.ticketprice;
 				user[i].mt->seatnum = (int *)malloc(sizeof(int) * ssize);
 				memcpy(user[i].mt->seatnum, seatbuf, sizeof(seatbuf) * ssize);
-				printf("구매 가능합니다\n");
-				printf("돈이 %d원 남았어요\n", user[i].money - ssize * ptr.ticketprice);
+				// printf("구매 가능합니다\n");
+				// printf("돈이 %d원 남았어요\n", user[i].money - ssize * ptr.ticketprice);
 				displaybookingticketinfo(ptr, user[i]);
 			}
 		}
 		// error handler
 	}
 
-	system("pause");
 }
 
 void dipslayseatadmin(void) {
@@ -455,21 +457,87 @@ void dipslayseatadmin(void) {
 void displaybookingticketinfo(Movie ptr, User us)
 {
 	system("cls");
-	printf("\n\n");
-	printf("\t--------------------영화 예매 티켓 정보---------------------\n");
-	printf("\t============================================================\n");
-	printf("\t 영화 : %s \t\t\t 감독 : %s\n", ptr.movieTitle, ptr.movieDirector);
-	printf("\t 회원정보  : %s\n", us.name);
-	printf("\t                                              날짜             : 29-07-2019\n");
-	printf("\t                                              상영시간         : %d:00 ~ %d:00\n", ptr.startTime, ptr.exitTime);
-	printf("\t                                              총상영시간       : %d분\n", ptr.runningTime);
-	for (int i = 0; i < us.mt->seatcnt; i++) {
-		printf("\t                                              좌석정보 No. : %d  \n", us.mt->seatnum[i]);
-	}
-	// printf("\t                                              price . : %d  \n\n", us.mt->);
+	
+	long long curtimetick, flagtick;
+	curtimetick = clock();
+	flagtick = curtimetick / CLOCKS_PER_SEC;
+	while ((clock() - curtimetick) / CLOCKS_PER_SEC < 5) {
+		if (flagtick != (clock() - curtimetick) / CLOCKS_PER_SEC) {
+			flagtick = (clock() - curtimetick) / CLOCKS_PER_SEC;
+			system("cls");
+			printf("\n\n\n\n");
+			printf("\t                         예매가 성공적으로 완료됐습니다 !                    \n\n\n");
+			printf("\t------------------------------영화 예매 티켓 정보----------------------------\n");
+			printf("\t=============================================================================\n");
+			printf("\t 영화      : %s \t\t\t      감독 : %s\n", ptr.movieTitle, ptr.movieDirector);
+			printf("\t 회원정보  : %s\n", us.name);
+			printf("\t                                              날짜             : 29-07-2019\n");
+			printf("\t                                              상영시간         : %d:00 ~ %d:00\n", ptr.startTime, ptr.exitTime);
+			printf("\t                                              총상영시간       : %d분\n", ptr.runningTime);
+			for (int i = 0; i < us.mt->seatcnt; i++) {
+				printf("\t                                              좌석정보 No.     : %d  \n", us.mt->seatnum[i]);
+			}
+			printf("\t                                              가격             : %d  \n\n", us.mt->ticketprice * us.mt->seatcnt);
 
-	printf("\t============================================================\n");
-	system("pause");
+			printf("\t=============================================================================\n\n");
+			printf("\t                         %lld초 안에 메인메뉴로 돌아갑니다 !                 \n", 5 - (clock() - curtimetick) / CLOCKS_PER_SEC);
+		}
+	}
+
 	return;
+}
+
+void showuserinfo(User us) 
+{
+	system("cls");
+
+	long long curtimetick, flagtick;
+	curtimetick = clock();
+	flagtick = curtimetick / CLOCKS_PER_SEC;
+	while ((clock() - curtimetick) / CLOCKS_PER_SEC < 5) {
+		if (flagtick != (clock() - curtimetick) / CLOCKS_PER_SEC) {
+			flagtick = (clock() - curtimetick) / CLOCKS_PER_SEC;
+			system("cls");
+			printf("\n\n\n\n");
+			printf("\t                         예매가 성공적으로 완료됐습니다 !                    \n\n\n");
+			printf("\t------------------------------영화 예매 티켓 정보----------------------------\n");
+			printf("\t=============================================================================\n");
+			printf("\t 영화      : %s \t\t\t", us.mt->movieTitle);
+			printf("\t 회원정보  : %s\n", us.name);
+			printf("\t                                              날짜             : 29-07-2019\n");
+			printf("\t                                              상영시간         : %d:00 ~ %d:00\n", us.mt->startTime, us.mt->exitTime);
+			printf("\t                                              총상영시간       : %d분\n", us.mt->runningTime);
+			for (int i = 0; i < us.mt->seatcnt; i++) {
+				printf("\t                                              좌석정보 No.     : %d  \n", us.mt->seatnum[i]);
+			}
+			printf("\t                                              가격             : %d  \n\n", us.mt->ticketprice * us.mt->seatcnt);
+
+			printf("\t=============================================================================\n\n");
+			printf("\t                         %lld초 안에 메인메뉴로 돌아갑니다 !                 \n", 5 - (clock() - curtimetick) / CLOCKS_PER_SEC);
+		}
+	}
+}
+
+void canclemovieticket(void)
+{
+	system("cls");
+	char buf[20], moviebuf[20]; memset(buf, 0, sizeof(buf)); memset(moviebuf, 0, sizeof(buf));
+	bool ok = false;
+	printf("\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t "); printf("회원 이름을 입력해주세요: "); scanf("%s", buf);
+	for (int i = 0; i < _msize(user) / sizeof(*user); i++) {
+		if (!strcmp(buf, user[i].name)) {
+			int pswd;
+			printf("        %s님! 비밀번호를 입력하세요                                     : ", user[i].name); scanf("%d", &pswd);
+			if (pswd == user[i].password) {
+				showuserinfo(user[i]);
+			}
+			system("cls");
+			printf("\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t "); printf("취소할 영화이름을 입력해주세요: "); scanf("%s", moviebuf);
+			system("pause");
+		}
+	}
+	if (ok) {
+
+	}
 
 }
