@@ -1,4 +1,6 @@
-// 좌석 변경
+// 예매할 때 예외처리
+// 신규 추가
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +11,8 @@ void initmovielist(void);
 void inituserlist(void);
 int displaymenu(void);
 int displayadminmenu(void);
+void checkadmin(int);
+void changeprice(int, int);
 void displayerrorhandler(long long);
 void displaywriteerrorhandler(long long);
 void displayexithandler(long long);
@@ -68,6 +72,7 @@ User *user;
 
 int main(void) {
 	srand((unsigned)time(NULL));
+	int adminpswd = 1234;
 	long long curtimetick, flagtick;
 	initmovielist();
 	inituserlist();
@@ -79,21 +84,7 @@ int main(void) {
 		switch (num) {
 		case 1:
 			// 패스워드 입력해야지만 통과할 수 있도록, 통과하지 못하면 초기화면으로
-			choicenum = displayadminmenu();
-			system("cls");
-			switch (choicenum) {
-			case 1:
-				// 가격 수정하기
-				break;
-			case 2:
-				dipslayseatadmin();
-				break;
-			case 3:
-				// 신작추가
-				break;
-			default:
-				break;
-			}
+			checkadmin(adminpswd);
 			break;
 		case 2:
 			choicenum = displaymovielist();
@@ -102,8 +93,6 @@ int main(void) {
 				break;
 			default:
 				displaymovietimelist(choicenum);
-				// 영화 이름과 시간 선택
-				// 입력 방법 틀렸을 때 오류 출력
 				break;
 			}
 			break;
@@ -210,6 +199,74 @@ int displaymenu(void)
 	return num;
 }
 
+void changeprice(int idx, int price)
+{
+	Movie *ptr = movielist[idx];
+	for (int i = 0; i < _msize(ptr) / sizeof(*ptr); i++) {
+		ptr[i].ticketprice = price;
+	}
+}
+
+void checkadmin(int adminpswd)
+{
+	Movie **ptr;
+	int pswd, choicenum, price, idx;
+	long long curtimetick, flagtick;
+	char moviename[20];
+	system("cls");
+	printf("\n\n\n\n\n\n\n\n\n\n");
+	printf("\t\t\t    "); printf("관리자 비밀번호를 입력하세요 : "); scanf("%d", &pswd);
+	if (pswd == adminpswd) {
+		choicenum = displayadminmenu();
+		system("cls");
+		switch (choicenum) {
+		case 1:
+			printf("\n\n\n\n\n\n\n\n\n\n");
+			printf("\t\t\t    "); printf("수정할 영화를 입력하세요 : "); scanf("%s", moviename);
+
+			idx = -1;
+			ptr = movielist;
+			for (int i = 0; i < _msize(ptr) / sizeof(*ptr); i++) {
+				if (!strcmp(ptr[i]->movieTitle, moviename)) {
+					idx = i;
+				}
+			}
+			if (idx == -1) goto err;
+			
+			system("cls");
+			printf("\n\n\n\n\n\n\n\n\n\n");
+			printf("\t\t\t    "); printf("수정할 가격을 입력하세요 : "); scanf("%d", &price);
+			if (price >= 5000 && price <= 15000) {
+				changeprice(idx, price);
+			}
+			else {
+				goto err;
+			}
+			break;
+		case 2:
+			dipslayseatadmin();
+			break;
+		case 3:
+			// 신작추가
+			break;
+		default:
+			break;
+		}
+	}
+	else {
+err:
+		curtimetick = clock();
+		flagtick = curtimetick / CLOCKS_PER_SEC;
+		displayerrorhandler(curtimetick);
+		while ((clock() - curtimetick) / CLOCKS_PER_SEC < 5) {
+			if (flagtick != (clock() - curtimetick) / CLOCKS_PER_SEC) {
+				flagtick = (clock() - curtimetick) / CLOCKS_PER_SEC;
+				displayerrorhandler(curtimetick);
+			}
+		}
+	}
+}
+
 int displayadminmenu(void)
 {
 	int num;
@@ -219,7 +276,7 @@ int displayadminmenu(void)
 		printf("\t\t\t    "); printf("            충남 인력개발원 영화관에 오신 것을 환영합니다   \n");
 		printf("\t\t\t    "); printf(" ==================================================================\n");
 		printf("\t\t\t    "); printf("||             1- 가격 수정하기:                                  ||\n");
-		printf("\t\t\t    "); printf("||             2- 자석 현황보기:                                  ||\n");
+		printf("\t\t\t    "); printf("||             2- 좌석 현황보기:                                  ||\n");
 		printf("\t\t\t    "); printf("||             3- 신작 추가하기:                                  ||\n");
 		printf("\t\t\t    "); printf("||================================================================||\n");
 		printf("\t\t\t    "); printf("	뒤로 가려면 0번을 눌러주세요 \n");
@@ -260,7 +317,6 @@ void displaywriteerrorhandler(long long curtimetick)
 	printf("\t\t\t\t\t#   ");
 	printf("%lld초 안에 재입력으로 넘어갑니다\n", 3 - (clock() - curtimetick) / CLOCKS_PER_SEC);
 }
-
 
 void displayexithandler(long long curtimetick)
 {
@@ -309,6 +365,8 @@ int displaymovielist(void)
 void displaymovietimelist(int movienum) 
 {
 	Movie **ptr = movielist;
+	long long curtimetick, flagtick;
+
 	system("cls");
 	printf("\n\n\n\n\n\n");
 	printf("\t\t  %s의 상영 시간표입니다\n\n", ptr[movienum - 1]->movieTitle);
@@ -322,8 +380,22 @@ void displaymovietimelist(int movienum)
 	int selecttime; 
 	printf("\t\t  원하시는 시간에 대한 번호를 입력하세요 : "); 
 	scanf("%d", &selecttime);
+	if (!(selecttime - 1 >= 0 && selecttime - 1 < _msize(ptr) / sizeof(*ptr))) goto err;
 	displayseat(movienum - 1, selecttime - 1);
 	system("pause");
+	
+	return;
+err:
+	curtimetick = clock();
+	flagtick = curtimetick / CLOCKS_PER_SEC;
+	displayerrorhandler(curtimetick);
+	while ((clock() - curtimetick) / CLOCKS_PER_SEC < 5) {
+		if (flagtick != (clock() - curtimetick) / CLOCKS_PER_SEC) {
+			flagtick = (clock() - curtimetick) / CLOCKS_PER_SEC;
+			displayerrorhandler(curtimetick);
+		}
+	}
+
 }
 
 void addmovielist(void)
@@ -343,7 +415,7 @@ void displayseat(int movienum, int stime)
 
 	for (int j = 0; j < _msize(ptr.seat) / sizeof(*ptr.seat); j++) {
 		for (int k = 0; k < _msize(ptr.seat[j]) / sizeof(*ptr.seat[j]); k++) {
-			printf("\t%d", j * 10 + k);
+			printf("\t%d", j * 10 + k + 1);
 		}
 		printf("\n");
 		for (int k = 0; k < _msize(ptr.seat[j]) / sizeof(*ptr.seat[j]); k++) {
@@ -374,6 +446,9 @@ void displayseat(int movienum, int stime)
 		if (ptr.seat[x][y] == 1) {
 			// error handler
 
+		}
+		else {
+			ptr.seat[x][y] = 1;
 		}
 	}
 	
