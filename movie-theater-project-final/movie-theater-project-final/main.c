@@ -21,7 +21,7 @@ static void display_bookingticket_info(Movie, User);			// 영화예매를 완료했을 때
 static void cancle_movie_ticket(void);							// 영화티켓을 취소하는 함수
 static void show_userinfo(User);								// 사용자 예매 정보를 보여주는 함수
 
-typedef struct Moviedata
+typedef struct Moviedata	// 영화 정보
 {
 	char movieTitle[50];
 	char movieDirector[50];
@@ -30,7 +30,7 @@ typedef struct Moviedata
 	int ticketprice;
 } Movie;
 
-struct Moviedetaildata
+struct Moviedetaildata		// 영화 초기화할 때 편하게 하기 위해서
 {
 	char movieTitle[50];
 	char movieDirector[50];
@@ -39,7 +39,7 @@ struct Moviedetaildata
 	int ticketprice;
 };
 
-struct MovieTicket
+struct MovieTicket			// 사용자가 가지고 있는 티켓정보
 {
 	char movieTitle[50];
 	int startTime; int exitTime; int runningTime;
@@ -47,16 +47,16 @@ struct MovieTicket
 	int seatcnt; int *seatnum;
 };
 
-typedef struct user
+typedef struct user			// 사용자 정보
 {
 	char name[20];
 	int password; int money;
 	struct MovieTicket *mt;
 } User;
 
-Movie **movielist;
-struct Moviedetaildata *movieinfo;
-User *user;
+Movie **movielist;						// 크게는 영화, 작게는 시간별로 구분을 했기 때문에 2차원 배열 선언
+struct Moviedetaildata *movieinfo;		// 초기화 과정에서 사용하는 정보
+User *user;								// 사용자 정보
 
 int main(void) {
 	srand((unsigned)time(NULL));				// 랜덤 시드 발생, 좌석 랜덤 배치로 인해 사용
@@ -65,27 +65,27 @@ int main(void) {
 	init_userlist();
 
 	do {
-		system("cls");
-		rewind(stdin);
-		int num = display_menu();
+		system("cls");							// 화면 초기화
+		rewind(stdin);							// 입력 버퍼를 비워주는 함수 
+		int num = display_menu();				// 첫 화면을 보여주게 된다
 		int choicenum;
 		rewind(stdin);
 		switch (num) {
 		case 1:
-			check_admin(adminpswd);
+			check_admin(adminpswd);					// 관리자 모드
 			break;
 		case 2:
-			choicenum = display_movie_list();
+			choicenum = display_movie_list();		// 영화 리스트를 보여주고 선택하는 함수
 			switch (choicenum) {
 			case 0:
 				break;
 			default:
-				display_movietime_list(choicenum);
+				display_movietime_list(choicenum);	// 시간을 선택하는 함수
 				break;
 			}
 			break;
 		case 3:
-			cancle_movie_ticket();
+			cancle_movie_ticket();					// 영화 티켓을 취소하는 함수
 			break;
 		case 4:
 			error_handler(5, "안녕히 가세요", "프로그램이 종료됩니다");
@@ -96,7 +96,23 @@ int main(void) {
 			break;
 		}
 	} while (1);
-end:
+
+end:	
+	for (int i = 0; i < _msize(movielist) / sizeof(*movielist); i++) {									// 메모리 해제
+		for (int j = 0; j < _msize(movielist[i]) / sizeof(*movielist[i]); j++) {
+			for (int k = 0; k < _msize(movielist[i][j].seat) / sizeof(*movielist[i][j].seat); k++) {
+				free(movielist[i][j].seat[k]);
+			}
+			free(movielist[i][j].seat);
+		}
+		free(movielist[i]);
+	}
+	free(movielist);
+	free(movieinfo);
+	for (int i = 0; i < _msize(user) / sizeof(*user); i++) {
+		free(user[i].mt);
+	}
+	free(user);
 	return 0;
 }
 
@@ -168,27 +184,27 @@ static void check_admin(int adminpswd)
 	system("cls");
 	printf("\n\n\n\n\n\n\n\n\n\n");printf("\t\t\t    "); 
 	printf("관리자 비밀번호를 입력하세요 : "); scanf("%d", &pswd);
-	if (pswd == adminpswd) {
-		choicenum = display_admin_menu();
+	if (pswd == adminpswd) {												// 비밀번호와 일치하다면
+		choicenum = display_admin_menu();							
 		system("cls");
 		switch (choicenum) {
 		case 1:
 			printf("\n\n\n\n\n\n\n\n\n\n"); printf("\t\t\t    "); 
 			printf("수정할 영화를 입력하세요 : "); scanf("%s", moviename);
 
-			idx = -1;
+			idx = -1;														// 영화 이름이 잘못됐다면 idx는 -1로 남는다
 			ptr = movielist;
 			for (int i = 0; i < _msize(ptr) / sizeof(*ptr); i++) {
-				if (!strcmp(ptr[i]->movieTitle, moviename)) {
-					idx = i;
+				if (!strcmp(ptr[i]->movieTitle, moviename)) {		// 영화 이름과 맞다면
+					idx = i;										// idx 초기화
 				}
 			}
-			if (idx == -1) goto err;
+			if (idx == -1) goto err;								// 맞지 않았을 때
 
 			system("cls");
 			printf("\n\n\n\n\n\n\n\n\n\n"); printf("\t\t\t    "); 
 			printf("수정할 가격을 입력하세요 : "); scanf("%d", &price);
-			if (price >= 5000 && price <= 15000) {
+			if (price >= 5000 && price <= 15000) {					// 가격 범위 지정
 				change_price(idx, price);
 			}
 			else {
@@ -196,7 +212,7 @@ static void check_admin(int adminpswd)
 			}
 			break;
 		case 2:
-			dipslay_seat_admin();
+			dipslay_seat_admin();									// 관리자 권한에서 자리 현황 확인
 			break;
 		default:
 			break;
@@ -245,9 +261,9 @@ static int display_admin_menu(void)
 		printf("\t\t\t    "); printf("	뒤로 가려면 0번을 눌러주세요 \n");
 		printf("\t\t\t    "); printf("	번호를 선택해주세요: ");
 		scanf("%d", &num);
-		if (num == 1 || num == 2 || num == 0) {
+		if (num == 1 || num == 2 || num == 0) {			
 			return num;
-		}
+		}	// 위 입력이 아니라면 계속 재입력 에러 메세지를 던져준다
 		error_handler(5, "사용자 입력을 다시 확인해주세요", "재입력으로 넘어갑니다");
 	}
 }
@@ -276,7 +292,7 @@ static int display_movie_list(void)
 	}
 }
 
-static void display_movietime_list(int movienum)
+static void display_movietime_list(int movienum)	// 영화 리스트 함수에서 반환한 값을 매개변수로 전달되는 함수
 {
 	int ret;
 	Movie **ptr = movielist;
@@ -294,10 +310,10 @@ static void display_movietime_list(int movienum)
 	int selecttime;
 	printf("\t\t  원하시는 시간에 대한 번호를 입력하세요 : ");
 	scanf("%d", &selecttime);
-	if (!(selecttime - 1 >= 0 && selecttime - 1 < _msize(ptr) / sizeof(*ptr))) goto err;
-	ret = display_seat(movienum - 1, selecttime - 1);
-	if (ret == -1) goto err;
-	else if (ret == 1) goto err2;
+	if (!(selecttime - 1 >= 0 && selecttime - 1 < _msize(ptr) / sizeof(*ptr))) goto err; // 시간 정보를 잘못 입력했다면
+	ret = display_seat(movienum - 1, selecttime - 1);									 // 해당 영화와 시간대에서만의 좌석 표시
+	if (ret == -1) goto err;		// 잘못된 입력값을 넣었을 때
+	else if (ret == 1) goto err2;	// 돈이 없을 때
 
 	system("pause");
 	return;
@@ -320,13 +336,13 @@ static int display_seat(int movienum, int stime)
 	printf("\t\t\t\t\t  SCREEN\t\t\t\t\n");
 	printf("\t    =================================================================  \n\n");
 
-	for (int j = 0; j < _msize(ptr.seat) / sizeof(*ptr.seat); j++) {
-		for (int k = 0; k < _msize(ptr.seat[j]) / sizeof(*ptr.seat[j]); k++) {
+	for (int j = 0; j < _msize(ptr.seat) / sizeof(*ptr.seat); j++) {					// 할당된 자리만큼
+		for (int k = 0; k < _msize(ptr.seat[j]) / sizeof(*ptr.seat[j]); k++) {			// 번호 입력
 			printf("\t%d", j * 10 + k + 1);
 		}
 		printf("\n");
-		for (int k = 0; k < _msize(ptr.seat[j]) / sizeof(*ptr.seat[j]); k++) {
-			if (ptr.seat[j][k] == 1) printf("\to");
+		for (int k = 0; k < _msize(ptr.seat[j]) / sizeof(*ptr.seat[j]); k++) {		
+			if (ptr.seat[j][k] == 1) printf("\to");										// 1이라면 o, -1이라면 x표시
 			else printf("\tx");
 		}
 		printf("\n\n");
@@ -335,25 +351,27 @@ static int display_seat(int movienum, int stime)
 	int hnum;
 	printf("\t\t\t\tx가 예매할 수 있는 자리입니다\n\n");
 	printf("        인원 수를 입력해주세요 (최대 4인)                                   : "); scanf("%d", &hnum);
-	if (hnum > 4 || hnum + ptr.emptyseatcnt > 100) return -1;
+	if (hnum > 4 || hnum + ptr.emptyseatcnt > 100) return -1;							// 100석이 초과되었거나 혹은 4명 이상을 입력했을 때
 
 	printf("        원하시는 좌석 번호 공백을 두고 입력해주세요 (선택한 갯수 만큼 입력) : ");
 	int *seatbuf = (int *)malloc(sizeof(int) * hnum);
-	int ssize = _msize(seatbuf) / sizeof(*seatbuf);
+	int ssize = _msize(seatbuf) / sizeof(*seatbuf);										// 인원수만큼 seatbuf 할당
 
 	for (int i = 0; i < _msize(seatbuf) / sizeof(*seatbuf); i++) {
 		scanf("%d", &seatbuf[i]);
-		if (!(seatbuf[i] - 1> 0 && seatbuf[i] - 1 < 100)) {
+		if (!(seatbuf[i] - 1> 0 && seatbuf[i] - 1 < 100)) {								// 자리 번호가 넘어갔을 때
+			free(seatbuf);
 			return -1;
 		}
 		int x, y;
 		x = (seatbuf[i] - 1) / 10, y = (seatbuf[i] - 1) % 10;
-		if (ptr.seat[x][y] == 1) {
+		if (ptr.seat[x][y] == 1) {														// 예매된 자리라면
+			free(seatbuf);
 			return -1;
 		}
 		else {
 			ptr.seat[x][y] = 1;
-			ptr.emptyseatcnt -= 1;
+			ptr.emptyseatcnt -= 1;														// 
 		}
 	}
 
@@ -373,18 +391,21 @@ static int display_seat(int movienum, int stime)
 					user[i].mt->ticketprice = ptr.ticketprice;
 					user[i].mt->seatnum = (int *)malloc(sizeof(int) * ssize);
 					memcpy(user[i].mt->seatnum, seatbuf, sizeof(seatbuf) * ssize);
-					display_bookingticket_info(ptr, user[i]);
+					display_bookingticket_info(ptr, user[i]);							// 예약 완료된 표를 보여주게 된다
 				}
 				else {
+					free(seatbuf);
 					return 1;
 				}
 			}
 			else {
+				free(seatbuf);
 				return -1;
 			}
 		}
 	}
 
+	free(seatbuf);
 	if (idx == -1) return -1;
 	return 0;
 }
@@ -523,7 +544,6 @@ static void show_userinfo(User us)
 
 static void cancle_movie_ticket(void)
 {
-	long long curtimetick, flagtick;
 	system("cls");
 	char buf[20], moviebuf[20]; memset(buf, 0, sizeof(buf)); memset(moviebuf, 0, sizeof(buf));
 	bool ok = false;
