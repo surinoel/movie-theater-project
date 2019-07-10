@@ -23,6 +23,8 @@ byte user_value[8]={
 void setup() {
   Serial.begin(115200);
   pinMode(pinPos, OUTPUT); pinMode(pinNeg, OUTPUT); pinMode(pinEn, OUTPUT);
+  digitalWrite(pinPos, HIGH);
+  digitalWrite(pinNeg, LOW);
   analogWrite(pinEn, pwmSpeed);
   lcd.begin(16, 2);
   lcd.createChar(0, user_value);

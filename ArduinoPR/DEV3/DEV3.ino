@@ -30,6 +30,7 @@ void loop() {
   {
      cTemp = Serial.read();
      if(cTemp == '\n') {  // 개행까지 받는다
+        sCommand += '\n'; 
         sCommand.toCharArray(buf, 30);
         Serial.write(buf);
         memset(buf, 0, sizeof(buf));
