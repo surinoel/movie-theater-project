@@ -1,7 +1,12 @@
+int pinPos = 5, pinNeg = 4, pinEn = 3;
+int pwmSpeed = 100;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  pinMode(12, OUTPUT);
+  pinMode(pinPos, OUTPUT); pinMode(pinNeg, OUTPUT); pinMode(pinEn, OUTPUT);
+  analogWrite(pinEn, pwmSpeed);
+
 }
 
 void loop() {

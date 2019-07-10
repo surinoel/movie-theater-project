@@ -1,10 +1,13 @@
 #include <LiquidCrystal.h>
-                                          // A0,A1,A2
-LiquidCrystal lcd(13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3);
+                                         
+LiquidCrystal lcd(13, 12, 11, 10, 9, 8, 7, 6, A0, A1, A2);
 String sCommand = "", sStart, sTmp;
 char cTemp;
 String Temp, Humi; 
 int receiveFlag = 0;
+int pinPos = 5, pinNeg = 4, pinEn = 3;
+int pwmSpeed = 100;
+char pwmSpeedBuf[30];
 
 byte user_value[8]={
     B00010,
@@ -18,9 +21,9 @@ byte user_value[8]={
 };
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
-  pinMode(
+  pinMode(pinPos, OUTPUT); pinMode(pinNeg, OUTPUT); pinMode(pinEn, OUTPUT);
+  analogWrite(pinEn, pwmSpeed);
   lcd.begin(16, 2);
   lcd.createChar(0, user_value);
   lcd.clear();
@@ -46,7 +49,14 @@ void loop() {
           lcd.print('C');
       }
       else if(sTmp == "PWM") {
-        
+          ret = sCommand.indexOf(',');
+          sTmp = sCommand.substring(0, ret);
+          sTmp.toCharArray(pwmSpeedBuf, 30);
+          pwmSpeed = atoi(pwmSpeedBuf);                        
+          lcd.setCursor(0, 1);
+          String buf = "PWM "; buf += pwmSpeed; buf += "%";
+          lcd.print(buf);
+          analogWrite(pinEn, pwmSpeed);
       }
     }
     
